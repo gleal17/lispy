@@ -1,10 +1,8 @@
 class Symbol:
     """
     Representa um símbolo Lisp.
-
     Diferentemente de strings, símbolos com o mesmo valor possuem a mesma identidade.
     """
-
     data : str
     CACHE = {}
 
@@ -35,6 +33,11 @@ class Symbol:
 
 # Formas especiais
 Symbol.QUOTE = Symbol('quote')
+#OUTRAS FORMAS
+Symbol.QUASIQUOTE = ('`')
+Symbol.UNQUOTE = (',')
+Symbol.UNQUOTE_SPLICING = (',@')
+#CONT.
 Symbol.LET = Symbol('let')
 Symbol.IF = Symbol('if')
 Symbol.LAMBDA = Symbol('lambda')
@@ -48,6 +51,12 @@ Symbol.SUB = Symbol('-')
 Symbol.MUL = Symbol('*')
 Symbol.DIV = Symbol('/')
 
+QUOTES = {
+    "'"  : Symbol.QUOTE,
+    "`"  : Symbol.QUASIQUOTE,
+    ","  : Symbol.UNQUOTE,
+    ",@" : Symbol.UNQUOTE_SPLICING
+}
 class _Var:
     def __getattr__(self, attr):
         return Symbol(attr)
