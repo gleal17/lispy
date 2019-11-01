@@ -37,6 +37,7 @@ Symbol.QUOTE = Symbol('quote')
 Symbol.QUASIQUOTE = ('`')
 Symbol.UNQUOTE = (',')
 Symbol.UNQUOTE_SPLICING = (',@')
+Symbol.LSQB = ('[')
 #CONT.
 Symbol.LET = Symbol('let')
 Symbol.IF = Symbol('if')

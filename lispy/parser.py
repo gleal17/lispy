@@ -5,64 +5,59 @@ from .runtime import Symbol
 from .symbol import Symbol
 import six
 
+def psym(s, symbol_table={}):
+        "Find or create unique Symbol entry for str s in symbol table."
+        if s not in symbol_table:
+            symbol_table[s] = Symbol(s)
+        return symbol_table[s]
+EOF_OBJECT = Symbol('#<eof-object>')  # Note: uninterned; can't be read
+
+
 class LispTransformer(InlineTransformer):
+
     def start(self, expr): 
         return [Symbol.BEGIN, expr]
 
     def list(self,expr):
         return list(expr)
 
-    def Sym(self, symbol_table={}):
-        "Find or create unique Symbol entry for str s in symbol table."
-        if self not in symbol_table:
-            symbol_table[self] = Symbol(self)
-        return symbol_table[self]
-    EOF_OBJECT = Symbol('#<eof-object>')  # Note: uninterned; can't be read
-    
-    def atom(self, token):
+    def atom(self, expr):
         """
         Numeros em numeros; #t e #f são booleans; "..." string;
         outro Symbol.
         """
-        if token == '#t':
+        if expr == '#t':
             return True
-        elif token == '#f':
+        elif expr == '#f':
             return False
-        elif token[0] == '"':
+        elif expr[0] == '"':
             if six.PY3:
-                return token[1:-1]
+                return expr[1:-1]
             else:
-                return token[1:-1].decode('string_escape')
+                return expr[1:-1].decode('string_escape')
         try:
-            return int(token)
+            return int(expr)
         except ValueError:
             try:
-                return float(token)
+                return float(expr)
             except ValueError:
                 try:
-                    return complex(token.replace('i', 'j', 1))
+                    return complex(expr.replace('i', 'j', 1))
                 except ValueError:
-                    return Sym(token)
+                    return psym(expr)
 
 def parse(src: str):
         """
         Compila string de entrada e retorna a S-expression equivalente.
         """
-        if src is True:
-            return "#t"
-        elif src is False:
-            return "#f"
-        elif isinstance(src, Symbol):
+        if isinstance(src, Symbol):
             return src
-        elif isinstance(src, str):
-            return '"%s"' % src.encode('string_escape').replace('"', r'\"')
         elif isinstance(src, list):
             return '('+' '.join(list(map(parse, src)))+')'
         elif isinstance(src, complex):
             return str(src).replace('j', 'i')
         else:
             return parser.parse(src)
-
 
 def _make_grammar():
     """

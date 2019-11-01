@@ -1,31 +1,23 @@
-?start : expr
+?start : expr+
 
 ?expr: atom | list
 
 ?number : INT | FLOAT
 	
-?atom: (number | STRING | SYMBOL) -> atom
+?atom: (number | STRING | SYMBOL | LSQB) -> atom
 	 
-?list : "(" expr* ")" -> list
-
-//TRUE   : "#t"
-//FALSE  : "#f"
-//BOOLEAN   : TRUE | FALSE
+?list : "[" expr (","expr)* "]"
 
 // Terminais
-//SYMBOL.0   : /[-!+\/*@$%^&~<>?|\\\w=]+/
 SYMBOL.0   : /[-!+\/*@$%^&~<>#?|\\\w=]+/
 STRING     : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
 INT.1      : /-?\d+/
 FLOAT.2    : /-?\d+\.\d+/
-//BOOLEAN    : (/#t|/#f)/s*
+LSQB       : /\[+/
+//JSON     : "(\w|\\"|\\/|\\f|\\n|\\b| )*"
+//COMMENT  : "//" /[^\n]/*
+//ESCAPE   : "\\" ( "$" | "\"")
 
 %ignore /\s+/
 %ignore /;[^\n]*/
 
-%import common.INT -> NUMBER
-%import common.WS_INLINE
-COMMENT: "//" /[^\n]/*
-
-%ignore WS_INLINE
-%ignore COMMENT

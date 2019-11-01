@@ -79,8 +79,8 @@ cobre a maior parte dos conceitos básicos.
 
 Podemos rodar os testes com um dos comandos:
 
-* `pytest tests/test_basic.py -k Grammar` - roda apenas testes relativos à gramática
-* `pytest tests/test_basic.py -k Runtime` - roda apenas testes do runtime
+* `pytest tests/test_simple.py -k Grammar` - roda apenas testes relativos à gramática
+* `pytest tests/test_simple.py -k Runtime` - roda apenas testes do runtime
 * `pytest tests/test_basic.py` - todos testes da seção
 
 
