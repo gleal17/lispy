@@ -12,16 +12,15 @@ def psym(s, symbol_table={}):
         return symbol_table[s]
 EOF_OBJECT = Symbol('#<eof-object>')  # Note: uninterned; can't be read
 
-
 class LispTransformer(InlineTransformer):
 
     def start(self, expr): 
         return [Symbol.BEGIN, expr]
 
-    def list(self,expr):
+    def list(self, *expr):
         return list(expr)
 
-    def atom(self, expr):
+    def atom(self, expr): 
         """
         Numeros em numeros; #t e #f são booleans; "..." string;
         outro Symbol.
@@ -33,8 +32,6 @@ class LispTransformer(InlineTransformer):
         elif expr[0] == '"':
             if six.PY3:
                 return expr[1:-1]
-            else:
-                return expr[1:-1].decode('string_escape')
         try:
             return int(expr)
         except ValueError:
@@ -45,25 +42,19 @@ class LispTransformer(InlineTransformer):
                     return complex(expr.replace('i', 'j', 1))
                 except ValueError:
                     return psym(expr)
-
+         
 def parse(src: str):
         """
         Compila string de entrada e retorna a S-expression equivalente.
         """
-        if isinstance(src, Symbol):
-            return src
-        elif isinstance(src, list):
-            return '('+' '.join(list(map(parse, src)))+')'
-        elif isinstance(src, complex):
-            return str(src).replace('j', 'i')
-        else:
-            return parser.parse(src)
+        return parser.parse(src)
+
+
 
 def _make_grammar():
     """
     Retorna uma gramática do Lark inicializada.
     """
-
     path = Path(__file__).parent / 'grammar.lark'
     with open(path) as fd:
         grammar = Lark(fd, parser='lalr', transformer=LispTransformer())

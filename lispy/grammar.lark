@@ -1,23 +1,23 @@
-?start : expr+
+?start : expr
 
-?expr: atom | list
+?expr : atom | list
 
 ?number : INT | FLOAT
-	
-?atom: (number | STRING | SYMBOL | LSQB) -> atom
-	 
-?list : "[" expr (","expr)* "]"
+
+?atom : (number | STRING | SYMBOL) -> atom
+
+?list : "(" expr* ")" -> list
 
 // Terminais
-SYMBOL.0   : /[-!+\/*@$%^&~<>#?|\\\w=]+/
-STRING     : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
-INT.1      : /-?\d+/
-FLOAT.2    : /-?\d+\.\d+/
-LSQB       : /\[+/
-//JSON     : "(\w|\\"|\\/|\\f|\\n|\\b| )*"
-//COMMENT  : "//" /[^\n]/*
-//ESCAPE   : "\\" ( "$" | "\"")
+SYMBOL.0  : /[-!+\/*@$%^#&~<>?|\\\w=]+/
+STRING    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
+INT.1     : /-?\d+/
+FLOAT.2   : /-?\d+\.\d+/
+COMMENT    : "//" /[^\n]/*
+
+%import common.WS_INLINE
 
 %ignore /\s+/
 %ignore /;[^\n]*/
-
+%ignore WS_INLINE
+%ignore COMMENT

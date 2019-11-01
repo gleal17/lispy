@@ -1,3 +1,4 @@
+import six
 class Symbol:
     """
     Representa um símbolo Lisp.
@@ -24,21 +25,16 @@ class Symbol:
 
     def __hash__(self):
         return id(self._data)
-
+    #ALTERAÇÕES
     def __eq__(self, other):
         if isinstance(other, Symbol):
             return self._data == other._data
-        return NotImplemented
+        else:
+            return other._data
 
 
 # Formas especiais
 Symbol.QUOTE = Symbol('quote')
-#OUTRAS FORMAS
-Symbol.QUASIQUOTE = ('`')
-Symbol.UNQUOTE = (',')
-Symbol.UNQUOTE_SPLICING = (',@')
-Symbol.LSQB = ('[')
-#CONT.
 Symbol.LET = Symbol('let')
 Symbol.IF = Symbol('if')
 Symbol.LAMBDA = Symbol('lambda')
@@ -52,12 +48,6 @@ Symbol.SUB = Symbol('-')
 Symbol.MUL = Symbol('*')
 Symbol.DIV = Symbol('/')
 
-QUOTES = {
-    "'"  : Symbol.QUOTE,
-    "`"  : Symbol.QUASIQUOTE,
-    ","  : Symbol.UNQUOTE,
-    ",@" : Symbol.UNQUOTE_SPLICING
-}
 class _Var:
     def __getattr__(self, attr):
         return Symbol(attr)
