@@ -31,7 +31,7 @@ class LispTransformer(InlineTransformer):
             return False
         elif expr[0] == '"':
             if six.PY3:
-                return expr[1:-1]
+                return expr[1:-1].replace("\\n","\n").replace("\\t","\t").replace(" t","\t").replace("\\","")
         try:
             return int(expr)
         except ValueError:
