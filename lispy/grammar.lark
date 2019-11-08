@@ -1,6 +1,6 @@
 ?start : expr
 
-?expr : atom | list
+?expr : atom | list | quote
 
 ?number : INT | FLOAT
 
@@ -8,12 +8,16 @@
 
 ?list : "(" expr* ")" -> list
 
+?quote: ("'"expr*) -> quote
+
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^#&~<>?|\\\w=]+/
 STRING    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
 INT.1     : /-?\d+/
 FLOAT.2   : /-?\d+\.\d+/
 COMMENT    : "//" /[^\n]/*
+
+
 
 %import common.WS_INLINE
 

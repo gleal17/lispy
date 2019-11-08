@@ -20,6 +20,9 @@ class LispTransformer(InlineTransformer):
     def list(self, *expr):
         return list(expr)
 
+    def quote(self, *expr): 
+        return [Symbol.QUOTE, *expr]       
+
     def atom(self, expr): 
         """
         Numeros em numeros; #t e #f são booleans; "..." string;

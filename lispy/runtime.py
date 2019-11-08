@@ -34,10 +34,10 @@ def to_string(x):
     else: return str(x)
 class Procedure(object):
     "A user-defined Scheme procedure."
-    def __init__(self, parms, exp, env):
-        self.parms, self.exp, self.env = parms, exp, env
+    def __init__(self, parms, body, env):
+        self.parms, self.body, self.env = parms, body, env
     def __call__(self, *args): 
-        return eval(self.exp, Env(self.parms, args, self.env))
+        return eval(self.body, Env(self.parms, args, self.env))
 
 
 
@@ -88,10 +88,17 @@ def eval(x, env=None):
 
     # Comando (lambda <vars> <body>)
     # (lambda (x) (+ x 1))
+    # elif head == Symbol.LAMBDA:
+    #     (_, vars, exp) = x
+    #     return Procedure(vars, exp, env)
     elif head == Symbol.LAMBDA:
-        (_, vars, exp) = x
-        return Procedure(vars, exp, env)
-
+        (_, names, body) = x
+        
+        def proc(*args):
+            local = dict(zip(names, args))
+            return eval(body, ChainMap(local, env))
+        
+        return proc   
     # Lista/chamada de funções
     # (sqrt 4)
     else:
@@ -104,6 +111,7 @@ def eval(x, env=None):
 #
 # Cria ambiente de execução.
 #
+
 def env(*args, **kwargs):
     """
     Retorna um ambiente de execução que pode ser aproveitado pela função
