@@ -1,12 +1,18 @@
-Trabalho de Lispy
-=================
-### Alterações
+## Alterações
 -Adição do docker
+
 >make build
+
 >make run
+
 >export PYTHONPATH=.
+
 >python  teste/test_simple.py -k Grammar
-=================
+
+>RUN TESTS
+
+# Trabalho de Lispy
+
 Neste trabalho, cada dupla deve implementar uma linguagem de programação inspirada no Lisp
 utilizando as tecnologias adotadas no curso (Python + Lark). O ponto de partida é o tutorial
 do Peter Norvig ["(How to Write a (Lisp) Interpreter (in Python))"](http://norvig.com/lispy.html). 

@@ -41,9 +41,6 @@ class LispTransformer(InlineTransformer):
             try:
                 return float(expr)
             except ValueError:
-                try:
-                    return complex(expr.replace('i', 'j', 1))
-                except ValueError:
                     return psym(expr)
          
 def parse(src: str):
@@ -51,8 +48,6 @@ def parse(src: str):
         Compila string de entrada e retorna a S-expression equivalente.
         """
         return parser.parse(src)
-
-
 
 def _make_grammar():
     """

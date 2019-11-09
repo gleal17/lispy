@@ -5,58 +5,18 @@ from types import MappingProxyType
 
 from .symbol import Symbol
 
-class Env(dict):
-    "An environment: a dict of {'var':val} pairs, with an outer Env."
-    def __init__(self, parms=(), args=(), outer=None):
-        # Bind parm list to corresponding args, or single parm to list of args
-        self.outer = outer
-        if isinstance(parms, Symbol): 
-            self.update({parms:list(args)})
-        else: 
-            if len(args) != len(parms):
-                raise TypeError('expected %s, given %s, ' 
-                                % (to_string(parms), to_string(args)))
-            self.update(zip(parms,args))
-    def find(self, var):
-        "Find the innermost Env where var appears."
-        if var in self: return self
-        elif self.outer is None: raise LookupError(var)
-        else: return self.outer.find(var)
-
-def to_string(x):
-    "Convert a Python object back into a Lisp-readable string."
-    if x is True: return "#t"
-    elif x is False: return "#f"
-    elif isinstance(x, Symbol): return x
-    elif isinstance(x, str): return '"%s"' % x.encode('string_escape').replace('"',r'\"')
-    elif isinstance(x, list): return '('+' '.join(map(to_string, x))+')'
-    elif isinstance(x, complex): return str(x).replace('j', 'i')
-    else: return str(x)
-class Procedure(object):
-    "A user-defined Scheme procedure."
-    def __init__(self, parms, body, env):
-        self.parms, self.body, self.env = parms, body, env
-    def __call__(self, *args): 
-        return eval(self.body, Env(self.parms, args, self.env))
-
-
-
-
 def eval(x, env=None):
     """
     Avalia expressão no ambiente de execução dado.
     """
-    Number = (int, float) 
-    #bool , str
     # Cria ambiente padrão, caso o usuário não passe o argumento opcional "env"
     if env is None:
         env = ChainMap({}, global_env)
     
-     # Avalia tipos atômicos
+    # Avalia tipos atômicos
     if isinstance(x, Symbol):
         return env[x]
-    elif isinstance(x, (Number)):
-        #int, float, bool, str
+    elif isinstance(x, (int, float, bool, str)):
         return x
 
     # Avalia formas especiais e listas
@@ -84,21 +44,27 @@ def eval(x, env=None):
     # Comando (let <expression> <expression>)
     # (let ((x 1) (y 2)) (+ x y))
     elif head == Symbol.LET:
-        return NotImplemented
+        (_,defs,expr) = x
+        local = ChainMap({},env)
+        
+        for i in defs:
+            eval([Symbol.DEFINE,i[0],i[1]],local)
+        
+        return eval(expr,local)
 
     # Comando (lambda <vars> <body>)
     # (lambda (x) (+ x 1))
-    # elif head == Symbol.LAMBDA:
-    #     (_, vars, exp) = x
-    #     return Procedure(vars, exp, env)
     elif head == Symbol.LAMBDA:
         (_, names, body) = x
         
+        if((type(names[0])== int) | (type(names[0])== float) | (type(names[0])==bool)):
+            raise TypeError
+   
         def proc(*args):
             local = dict(zip(names, args))
             return eval(body, ChainMap(local, env))
-        
-        return proc   
+        return proc
+
     # Lista/chamada de funções
     # (sqrt 4)
     else:
@@ -107,17 +73,17 @@ def eval(x, env=None):
         arguments = [eval(arg, env) for arg in args]
         return proc(*arguments)
 
-
 #
 # Cria ambiente de execução.
 #
-
 def env(*args, **kwargs):
     """
     Retorna um ambiente de execução que pode ser aproveitado pela função
     eval().
+
     Aceita um dicionário como argumento posicional opcional. Argumentos nomeados
     são salvos como atribuições de variáveis.
+
     Ambiente padrão
     >>> env()
     {...}
@@ -157,7 +123,6 @@ def _make_global_env():
         'append':  op.add,  
         'apply':   lambda proc, args: proc(*args),
         'begin':   lambda *x: x[-1],
-        'boolean?': lambda x: isinstance(x, bool),
         'car':     lambda x: head,
         'cdr':     lambda x: x[1:], 
         'cons':    lambda x,y: [x] + y,

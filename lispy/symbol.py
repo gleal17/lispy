@@ -1,9 +1,9 @@
-import six
 class Symbol:
     """
     Representa um símbolo Lisp.
     Diferentemente de strings, símbolos com o mesmo valor possuem a mesma identidade.
     """
+
     data : str
     CACHE = {}
 
@@ -25,12 +25,11 @@ class Symbol:
 
     def __hash__(self):
         return id(self._data)
-    #ALTERAÇÕES
+
     def __eq__(self, other):
         if isinstance(other, Symbol):
             return self._data == other._data
-        else:
-            return other._data
+        return NotImplemented
 
 
 # Formas especiais

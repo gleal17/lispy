@@ -4,7 +4,7 @@
 
 ?number : INT | FLOAT
 
-?atom : (number | STRING | SYMBOL) -> atom
+?atom : (number | STRING | SYMBOL ) -> atom
 
 ?list : "(" expr* ")" -> list
 
@@ -15,12 +15,9 @@ SYMBOL.0  : /[-!+\/*@$%^#&~<>?|\\\w=]+/
 STRING    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
 INT.1     : /-?\d+/
 FLOAT.2   : /-?\d+\.\d+/
-COMMENT    : "//" /[^\n]/*
-
-
+COMMENT   : "//" /[^\n]/*
 
 %import common.WS_INLINE
-
 %ignore /\s+/
 %ignore /;[^\n]*/
 %ignore WS_INLINE
